@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  # MySQL service
+  mysql-db:
+    image: mysql:latest
+    container_name: mysql-container-wex
+    environment:
+      MYSQL_ROOT_PASSWORD: wexpass  # Change as needed
+      MYSQL_DATABASE: wexdb
+      MYSQL_USER: wex
+      MYSQL_PASSWORD: wexpass # Change as needed
+    ports:
+      - "3306:3306"  # Map container port 3306 to host port 3306
