@@ -2,30 +2,60 @@ package controller
 
 import (
 	"bytes"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"testing"
+
+	"github.com/Joaovitordebrito/wex-purchase-service/src/model"
+	"github.com/gorilla/mux"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCreatePurchase(t *testing.T) {
-	requestBody := []byte(`{
-		"description":"asasd",
-		"purchaseAmount":0.9
-	}`)
+	mockController := &MockPurchaseController{
+		CreatePurchaseFunc: func(w http.ResponseWriter, r *http.Request) {
 
-	req, err := http.NewRequest(http.MethodPost, "/purchase", bytes.NewBuffer(requestBody))
-	if err != nil {
-		t.Fatal(err)
+			purchase := model.Purchase{
+				Description:     "Test",
+				TransactionDate: "2023-10-09",
+				PurchaseAmount:  100.0,
+			}
+			json.NewEncoder(w).Encode(purchase)
+		},
 	}
 
+	reqBody, _ := json.Marshal(model.Purchase{
+		Description:     "Test",
+		TransactionDate: "2023-10-09",
+		PurchaseAmount:  100.0,
+	})
+	req := httptest.NewRequest("POST", "/purchase", bytes.NewBuffer(reqBody))
 	w := httptest.NewRecorder()
 
-	CreatePurchase(w, req)
+	mockController.CreatePurchase(w, req)
 
-	res := w.Result()
+	assert.Equal(t, http.StatusOK, w.Code)
 
-	if !reflect.DeepEqual(http.StatusCreated, res.StatusCode) {
-		t.Errorf("wanted: %d, got: %d", http.StatusCreated, res.StatusCode)
+}
+func TestGetConvertedCurrency(t *testing.T) {
+	mockController := &MockPurchaseController{
+		GetConvertedCurrencyFunc: func(w http.ResponseWriter, r *http.Request) {
+			convertedPurchase := model.ConvertedPurchase{
+				PurchaseAmount:  100.0,
+				TargetCurrency:  5.0,
+				ConvertedAmount: 500.0,
+			}
+			json.NewEncoder(w).Encode(convertedPurchase)
+		},
 	}
+
+	req := httptest.NewRequest("GET", "/converted/currency/some-uuid/some-country", nil)
+	w := httptest.NewRecorder()
+
+	r := mux.NewRouter()
+	r.HandleFunc("/converted/currency/{uuid}/{country}", mockController.GetConvertedCurrency)
+	r.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
 }
