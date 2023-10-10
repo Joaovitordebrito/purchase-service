@@ -15,7 +15,14 @@ import (
 	"golang.org/x/text/language"
 )
 
-func CreatePurchase(w http.ResponseWriter, r *http.Request) {
+type PurchaseController interface {
+	CreatePurchase(w http.ResponseWriter, r *http.Request)
+	GetConvertedCurrency(w http.ResponseWriter, r *http.Request)
+}
+
+type PurchaseControllerImpl struct{}
+
+func (c *PurchaseControllerImpl) CreatePurchase(w http.ResponseWriter, r *http.Request) {
 	requestBody, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		response.Error(w, http.StatusUnprocessableEntity, err)
@@ -55,7 +62,7 @@ func CreatePurchase(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusCreated, purchase)
 }
 
-func GetConvertedCurrency(w http.ResponseWriter, r *http.Request) {
+func (c *PurchaseControllerImpl) GetConvertedCurrency(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	purchaseUUID := params["uuid"]
 

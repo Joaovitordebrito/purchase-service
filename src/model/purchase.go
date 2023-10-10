@@ -14,7 +14,7 @@ type Purchase struct {
 
 type ConvertedPurchase struct {
 	PurchaseAmount  float64 `json:"purchaseAmount,omitempty"`
-	ExchangeRate    float64 `json:"exchangeRate,omitempty"`
+	TargetCurrency  float64 `json:"targetCurrency,omitempty"`
 	ConvertedAmount float64 `json:"ConvertedAmount,omitempty"`
 }
 

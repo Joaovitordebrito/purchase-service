@@ -1,14 +1,35 @@
-version: '3.8'
+version: '3.7'
 
 services:
   # MySQL service
-  mysql-db:
-    image: mysql:latest
+  mysql:
+    image: mysql:5.7
     container_name: mysql-container-wex
     environment:
-      MYSQL_ROOT_PASSWORD: wexpass  # Change as needed
+      MYSQL_ROOT_PASSWORD: wexpass
       MYSQL_DATABASE: wexdb
       MYSQL_USER: wex
-      MYSQL_PASSWORD: wexpass # Change as needed
+      MYSQL_PASSWORD: wexpass
     ports:
-      - "3306:3306"  # Map container port 3306 to host port 3306
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  # Go application service
+  app:
+    build:
+      context: .
+    container_name: go-app-container
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_USER: wex
+      MYSQL_PASSWORD: wexpass
+      MYSQL_DBNAME: wexdb
+
+volumes:
+  mysql_data:

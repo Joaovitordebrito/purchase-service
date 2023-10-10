@@ -21,7 +21,7 @@ func NewPurchaseRepo(db *sql.DB) *purchase {
 
 func (repo purchase) Create(purchase model.Purchase) (uint64, error) {
 	statement, err := repo.db.Prepare(
-		"insert into purchase (uuid, description, purchaseAmount, transactionDate) values (?, ?, ?, ?)",
+		"insert into purchase (uuid, description, purchase_amount, transaction_date) values (?, ?, ?, ?)",
 	)
 	if err != nil {
 		return 0, err
@@ -43,7 +43,7 @@ func (repo purchase) Create(purchase model.Purchase) (uint64, error) {
 func (repo purchase) GetConvertedCurrency(uuid string, country string) (model.ConvertedPurchase, error) {
 
 	conn, err := repo.db.Query(
-		"select uuid, purchaseAmount, transactionDate from purchase where uuid = ?",
+		"select uuid, purchase_amount, transaction_date from purchase where uuid = ?",
 		uuid,
 	)
 	if err != nil {
@@ -110,7 +110,7 @@ func convertCurrency(purchase model.Purchase, country string) (model.ConvertedPu
 
 		err = json.NewDecoder(res.Body).Decode(&response)
 		if err != nil {
-			panic(err)
+			return model.ConvertedPurchase{}, err
 		}
 		if len(response.Data) > 0 {
 			for _, item := range response.Data {
@@ -118,7 +118,7 @@ func convertCurrency(purchase model.Purchase, country string) (model.ConvertedPu
 					fmt.Printf("Record Date: %s, Exchange Rate: %s\n", item.RecordDate, item.ExchangeRate)
 					floatExchangeRate, err := strconv.ParseFloat(item.ExchangeRate, 64)
 					if err != nil {
-						panic(err)
+						return model.ConvertedPurchase{}, err
 					}
 					exchangeRate = floatExchangeRate
 				}
@@ -138,9 +138,15 @@ func convertCurrency(purchase model.Purchase, country string) (model.ConvertedPu
 		return model.ConvertedPurchase{}, err
 	}
 
+	formattedExchangeRate := fmt.Sprintf("%.2f", exchangeRate)
+	parsedAndFormattedExchangeRate, err := strconv.ParseFloat(formattedExchangeRate, 64)
+	if err != nil {
+		return model.ConvertedPurchase{}, err
+	}
+
 	return model.ConvertedPurchase{
 		PurchaseAmount:  purchase.PurchaseAmount,
-		ExchangeRate:    exchangeRate,
+		TargetCurrency:  parsedAndFormattedExchangeRate,
 		ConvertedAmount: parsedAndFormattedConvertedAmount,
 	}, nil
 }

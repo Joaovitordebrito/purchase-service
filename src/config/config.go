@@ -22,9 +22,10 @@ func LoadConfig() {
 
 	Port, err = strconv.Atoi(os.Getenv("API_PORT"))
 	if err != nil {
-		Port = 9000
+		Port = 8080
 	}
-	StringDBconnect = fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local",
+	// StringDBconnect = fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local",
+	StringDBconnect = fmt.Sprintf("%s:%s@tcp(mysql-container-wex:3306)/%s",
 		os.Getenv("DB_USER"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_DATABASE"),
