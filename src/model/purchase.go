@@ -15,7 +15,7 @@ type Purchase struct {
 type ConvertedPurchase struct {
 	PurchaseAmount  float64 `json:"purchaseAmount,omitempty"`
 	TargetCurrency  float64 `json:"targetCurrency,omitempty"`
-	ConvertedAmount float64 `json:"ConvertedAmount,omitempty"`
+	ConvertedAmount float64 `json:"convertedAmount,omitempty"`
 }
 
 func (purchase *Purchase) Prepare() error {
