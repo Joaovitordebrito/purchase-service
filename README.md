@@ -49,7 +49,7 @@ then run the docker compose
 
       http://localhost:8080/converted/currency/db7e9990-cc3c-4c86-9105-3803b754b8c6/argentina
 
-**response status code**: <span style="color:green">*200* </span>.
+**response status code: 201**
 
 
 **response body exemple:**
