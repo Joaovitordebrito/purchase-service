@@ -1,6 +1,6 @@
 # # wex-purchase-service
 
-## how to setup and run the project
+## Wow to setup and run the project
 
   `git clone git@github.com:Joaovitordebrito/wex-purchase-service.git`
   or 
@@ -10,27 +10,27 @@ then run the docker compose
 `docker compose up --build`
 
 ## Routes
-### Store a Purchase Transaction:
+### Store a purchase transaction:
  **POST** 
  
      http://localhost:8080/purchase
 
- #### request body exemple: 
+ #### Request body exemple: 
 
       {
     	"description":"test description",
     	"purchaseAmount": 7.98
     	"transactionDate": "2023-02-03"
-    }
+      }
 
 - **description is a string**
 - **purchaseAmount is a number**
 - **transactionDate is a string but must be a valid date format (YYYY-MM-dd)**
 
-**response status code**: <span style="color:green">*201*</span>.
+**Response status code**: <span style="color:green">*201*</span>.
 
 
-**response body exemple:**
+**Response body exemple:**
 
     {
     	"UUID": "db7e9990-cc3c-4c86-9105-3803b754b8c6",
@@ -40,19 +40,19 @@ then run the docker compose
     }
 
 
-### Retrieve a Purchase Transaction in a Specified Country’s Currency
+### Retrieve a purchase transaction in a specified country’s currency
 **GET** 
  
      http://localhost:8080/converted/currency/:uuid/country
 
- #### request uri exemple: 
+ #### Request uri exemple: 
 
       http://localhost:8080/converted/currency/db7e9990-cc3c-4c86-9105-3803b754b8c6/argentina
 
-**response status code: 201**
+**Response status code: 201**
 
 
-**response body exemple:**
+**Response body exemple:**
 
     {
 		"purchaseAmount": 76.51,
@@ -64,7 +64,7 @@ then run the docker compose
 - **targetCurrency is the value of the chosen currency**
 - **convertedAmount is the value of the purchase converted to the chosen currency**
 
-If the country chosen does not have a currency data in the past 6 months the response will be:
+If the selected country does not have a currency data in the past 6 months the response will be:
 
     {
 		"error": "the purchase cannot be converted to the target currency"
