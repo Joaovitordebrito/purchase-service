@@ -8,10 +8,69 @@ import (
 	"testing"
 
 	"github.com/Joaovitordebrito/wex-purchase-service/src/model"
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 )
 
+func TestValidadeUser(t *testing.T) {
+	testTable := []struct {
+		name         string
+		purchaseData model.Purchase
+		expectedErr  bool
+	}{
+		{
+			name: "valid payload",
+
+			purchaseData: model.Purchase{
+				UUID:            uuid.New().String(),
+				Description:     "aaaaaaaaaa",
+				PurchaseAmount:  1.9,
+				TransactionDate: "2023-11-01",
+			},
+			expectedErr: false,
+		},
+		{
+			name: "invalid date on payload",
+			purchaseData: model.Purchase{
+				UUID:            uuid.New().String(),
+				Description:     "aaaaaaaaaa",
+				PurchaseAmount:  1.9,
+				TransactionDate: "1999-116-01",
+			},
+			expectedErr: true,
+		},
+		{
+			name: "invalid description",
+			purchaseData: model.Purchase{
+				UUID:            uuid.New().String(),
+				Description:     "",
+				PurchaseAmount:  1.9,
+				TransactionDate: "2023-11-01",
+			},
+			expectedErr: true,
+		},
+		{
+			name: "invalid purchase amount",
+			purchaseData: model.Purchase{
+				UUID:            uuid.New().String(),
+				Description:     "aasasdaaa",
+				PurchaseAmount:  -1.9,
+				TransactionDate: "2023-11-01",
+			},
+			expectedErr: true,
+		},
+	}
+	for _, tc := range testTable {
+		t.Run(tc.name, func(t *testing.T) {
+			err := tc.purchaseData.Prepare()
+
+			if err != nil && tc.expectedErr == false {
+				t.Errorf("expected (%v), got (%v)", tc.expectedErr, true)
+			}
+		})
+	}
+}
 func TestCreatePurchase(t *testing.T) {
 	mockController := &MockPurchaseController{
 		CreatePurchaseFunc: func(w http.ResponseWriter, r *http.Request) {
