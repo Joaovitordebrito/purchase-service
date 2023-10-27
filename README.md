@@ -1,10 +1,10 @@
-# # wex-purchase-service
+# # purchase-service
 
 ## Wow to setup and run the project
 
-  `git clone git@github.com:Joaovitordebrito/wex-purchase-service.git`
+  `git clone git@github.com:Joaovitordebrito/purchase-service.git`
   or 
-  `git clone https://github.com/Joaovitordebrito/wex-purchase-service.git`
+  `git clone https://github.com/Joaovitordebrito/purchase-service.git`
 
 then run the docker compose
 `docker compose up --build`
